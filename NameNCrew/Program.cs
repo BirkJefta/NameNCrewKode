@@ -4,7 +4,7 @@ using System.IO;
 using NameNCrew;
 
 
-string connectionString = "Server=PC;Database=IMDB;" +
+string connectionString = "Server=BIRKPC;Database=IMDB;" +
     "integrated security=True;TrustServerCertificate=True;";
 Stopwatch sw = new Stopwatch();
 sw.Start();
@@ -57,7 +57,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                     foreach (string knownForName in name.KnownForTitles)
                     {
                         if (!KnownForTitles.ContainsKey(knownForName))
-                            AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles);
+                            AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles); 
 
                         bulkSql.InsertProfessionName(name.Id, KnownForTitles[knownForName]);
                     }
