@@ -25,7 +25,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         reader.ReadLine(); //skipper første linje
         int linecount = 0;
         int total = 0;
-        int batchSize = 100000;
+        int batchSize = 1000000;
         string? line;
         SqlTransaction sqlTrans = sqlConn.BeginTransaction();
         while ((line = reader.ReadLine()) != null)
@@ -67,14 +67,14 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                     if (linecount >= batchSize)
                     {
                         //indsætter batch i db
-                        SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
-                        cmd.ExecuteNonQuery();
+                        //SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
+                        //cmd.ExecuteNonQuery();
                         bulkSql.InsertIntoDB(sqlConn, sqlTrans, insertNames: true);
                         bulkSql.ClearTables();
 
 
-                        cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
-                        cmd.ExecuteNonQuery();
+                        //cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
+                        //cmd.ExecuteNonQuery();
                         linecount = 0;
                         sqlTrans.Commit();
                         sqlTrans = sqlConn.BeginTransaction();
@@ -100,14 +100,14 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         }
         if (linecount > 0)
         {
-            SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
-            cmd.ExecuteNonQuery();
+            //SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
+            //cmd.ExecuteNonQuery();
 
             bulkSql.InsertIntoDB(sqlConn, sqlTrans);
             bulkSql.ClearTables();
 
-            cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
-            cmd.ExecuteNonQuery();
+            //cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
+            //cmd.ExecuteNonQuery();
             sqlTrans.Commit();
 
         }
@@ -130,7 +130,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         reader.ReadLine(); //skipper første linje
         int linecount = 0;
         int total = 0;
-        int batchSize = 100000;
+        int batchSize = 1000000;
         string? line;
         SqlTransaction sqlTrans = sqlConn.BeginTransaction();
         while ((line = reader.ReadLine()) != null)
