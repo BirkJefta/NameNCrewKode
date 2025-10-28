@@ -4,7 +4,7 @@ using System.IO;
 using NameNCrew;
 
 
-string connectionString = "Server=BIRKPC;Database=IMDB;" +
+string connectionString = "Server=PC;Database=IMDB;" +
     "integrated security=True;TrustServerCertificate=True;";
 Stopwatch sw = new Stopwatch();
 sw.Start();
@@ -25,7 +25,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         reader.ReadLine(); //skipper første linje
         int linecount = 0;
         int total = 0;
-        int batchSize = 100000;
+        int batchSize = 1000000;
         string? line;
         SqlTransaction sqlTrans = sqlConn.BeginTransaction();
         while ((line = reader.ReadLine()) != null)
@@ -130,7 +130,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         reader.ReadLine(); //skipper første linje
         int linecount = 0;
         int total = 0;
-        int batchSize = 100000;
+        int batchSize = 1000000;
         string? line;
         SqlTransaction sqlTrans = sqlConn.BeginTransaction();
         while ((line = reader.ReadLine()) != null)
