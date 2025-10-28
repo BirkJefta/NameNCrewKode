@@ -4,7 +4,7 @@ using System.IO;
 using NameNCrew;
 
 
-string connectionString = "Server=PC;Database=IMDB;" +
+string connectionString = "Server=BIRKPC;Database=IMDB;" +
     "integrated security=True;TrustServerCertificate=True;";
 Stopwatch sw = new Stopwatch();
 sw.Start();
@@ -67,14 +67,14 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                     if (linecount >= batchSize)
                     {
                         //indsætter batch i db
-                        SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
-                        cmd.ExecuteNonQuery();
+                        //SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
+                        //cmd.ExecuteNonQuery();
                         bulkSql.InsertIntoDB(sqlConn, sqlTrans, insertNames: true);
                         bulkSql.ClearTables();
 
 
-                        cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
-                        cmd.ExecuteNonQuery();
+                        //cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
+                        //cmd.ExecuteNonQuery();
                         linecount = 0;
                         sqlTrans.Commit();
                         sqlTrans = sqlConn.BeginTransaction();
@@ -100,14 +100,14 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         }
         if (linecount > 0)
         {
-            SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
-            cmd.ExecuteNonQuery();
+            //SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
+            //cmd.ExecuteNonQuery();
 
             bulkSql.InsertIntoDB(sqlConn, sqlTrans);
             bulkSql.ClearTables();
 
-            cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
-            cmd.ExecuteNonQuery();
+            //cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
+            //cmd.ExecuteNonQuery();
             sqlTrans.Commit();
 
         }
