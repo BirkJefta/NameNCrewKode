@@ -51,7 +51,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                         if (!PrimaryProfession.ContainsKey(profession))
                             AddProfession(profession, sqlConn, sqlTrans, PrimaryProfession);
 
-                        bulkSql.InsertProfessionName(name.Id, PrimaryProfession[profession]);
+                        bulkSql.InsertProfessionName(name.Id, PrimaryProfession[profession]); //skal rettes så den indsætter i profession i stedet
                     }
 
                     foreach (string knownForName in name.KnownForTitles)
@@ -59,7 +59,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                         if (!KnownForTitles.ContainsKey(knownForName))
                             AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles); 
 
-                        bulkSql.InsertProfessionName(name.Id, KnownForTitles[knownForName]);
+                        bulkSql.InsertProfessionName(name.Id, KnownForTitles[knownForName]); //skal have sin egen metode hvis den skal virke
                     }
 
                     linecount++;
@@ -214,8 +214,8 @@ void AddProfession(string primaryProfession, SqlConnection sqlConn, SqlTransacti
     if (!PrimaryProfession.ContainsKey(primaryProfession))
     {
         SqlCommand sqlComm = new SqlCommand(
-            "INSERT INTO TitleTypes (Type) VALUES ('" + PrimaryProfession + "'); " +
-            "SELECT SCOPE_IDENTITY();", sqlConn, sqlTrans);
+            "INSERT INTO TitleTypes (Type) VALUES ('" + PrimaryProfession + "'); " + 
+            "SELECT SCOPE_IDENTITY();", sqlConn, sqlTrans); //forkert tabel skal rettes
         int newId = Convert.ToInt32(sqlComm.ExecuteScalar());
         PrimaryProfession[primaryProfession] = newId;
     }
