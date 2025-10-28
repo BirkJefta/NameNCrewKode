@@ -15,6 +15,8 @@ namespace NameNCrew {
         public DataTable ProfessionNameTable { get; set; }
         public DataTable TitleDirectorTable { get; set; }
         public DataTable TitleWriterTable { get; set; }
+        public DataTable TitleNameTable { get; set; }
+
         public BulkSql()
         {
             NameTable = new DataTable();
@@ -34,6 +36,10 @@ namespace NameNCrew {
             TitleWriterTable = new DataTable();
             TitleWriterTable.Columns.Add("TitleId", typeof(int));
             TitleWriterTable.Columns.Add("WriterId", typeof(int));
+
+            TitleNameTable = new DataTable();
+            TitleNameTable.Columns.Add("TitleId", typeof(int));
+            TitleNameTable.Columns.Add("NameId", typeof(int));
         }
 
         public void InsertName(Name name)
@@ -70,6 +76,14 @@ namespace NameNCrew {
             TitleWriterTable.Rows.Add(row);
         }
 
+        public void InsertTitleName(int titleId, int nameId)
+        {
+            DataRow row = TitleWriterTable.NewRow();
+            row["TitleId"] = titleId;
+            row["NameId"] = nameId;
+            TitleWriterTable.Rows.Add(row);
+        }
+
         public void InsertIntoDB(SqlConnection sqlConn, SqlTransaction sqlTrans, bool insertNames = false, bool insertCrew = false)
         {
             if (insertNames)
@@ -92,6 +106,14 @@ namespace NameNCrew {
                     bulkCopy.ColumnMappings.Add("ProfessionId", "ProfessionId");
                     bulkCopy.ColumnMappings.Add("NameId", "NameId");
                     bulkCopy.WriteToServer(ProfessionNameTable);
+                }
+
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "Title_Name";
+                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
+                    bulkCopy.ColumnMappings.Add("NameId", "NameId");
+                    bulkCopy.WriteToServer(TitleNameTable);
                 }
             }
 
@@ -121,6 +143,7 @@ namespace NameNCrew {
             TitleWriterTable.Clear();
             ProfessionNameTable.Clear();
             NameTable.Clear();
+            TitleNameTable.Clear();
         }
 
     }
