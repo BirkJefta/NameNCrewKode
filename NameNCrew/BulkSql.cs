@@ -1,77 +1,126 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace NameNCrew {
     public class BulkSql {
 
-        public DataTable TitleDataTable { get; set; }
-        public DataTable TitleGenreDataTable { get; set; }
+        public DataTable NameTable { get; set; }
+        public DataTable ProfessionNameTable { get; set; }
+        public DataTable TitleDirectorTable { get; set; }
+        public DataTable TitleWriterTable { get; set; }
         public BulkSql()
         {
-            TitleDataTable = new DataTable();
-            TitleDataTable.Columns.Add("Id", typeof(int));
-            TitleDataTable.Columns.Add("PrimaryName", typeof(string));
-            TitleDataTable.Columns.Add("BirthYear", typeof(short));
-            TitleDataTable.Columns.Add("DeathYear", typeof(short));
+            NameTable = new DataTable();
+            NameTable.Columns.Add("Id", typeof(int));
+            NameTable.Columns.Add("PrimaryName", typeof(string));
+            NameTable.Columns.Add("BirthYear", typeof(short));
+            NameTable.Columns.Add("DeathYear", typeof(short));
 
-            TitleGenreDataTable = new DataTable();
-            TitleGenreDataTable.Columns.Add("TitleId", typeof(int));
-            TitleGenreDataTable.Columns.Add("GenreId", typeof(int));
+            ProfessionNameTable = new DataTable();
+            ProfessionNameTable.Columns.Add("ProfessionId", typeof(int));
+            ProfessionNameTable.Columns.Add("NameId", typeof(int));
+
+            TitleDirectorTable = new DataTable();
+            TitleDirectorTable.Columns.Add("TitleId", typeof(int));
+            TitleDirectorTable.Columns.Add("DirectorId", typeof(int));
+
+            TitleWriterTable = new DataTable();
+            TitleWriterTable.Columns.Add("TitleId", typeof(int));
+            TitleWriterTable.Columns.Add("WriterId", typeof(int));
         }
 
         public void InsertName(Name name)
         {
-            DataRow row = TitleDataTable.NewRow();
+            DataRow row = NameTable.NewRow();
             row["Id"] = name.Id;
             row["PrimaryName"] = name.PrimaryName;
             row["BirthYear"] = (object?)name.BirthYear ?? DBNull.Value;
             row["DeathYear"] = (object?)name.DeathYear ?? DBNull.Value;
-            TitleDataTable.Rows.Add(row);
+            NameTable.Rows.Add(row);
         }
 
-        public void InsertProfession(int titleId, int genreId)
+        public void InsertProfessionName(int professionId, int nameId)
         {
-            DataRow row = TitleGenreDataTable.NewRow();
+            DataRow row = ProfessionNameTable.NewRow();
+            row["ProfessionId"] = professionId;
+            row["NameId"] = nameId;
+            ProfessionNameTable.Rows.Add(row);
+        }
+
+        public void InsertTitleDirector(int titleId, int directorId)
+        {
+            DataRow row = TitleDirectorTable.NewRow();
             row["TitleId"] = titleId;
-            row["GenreId"] = genreId;
-            TitleGenreDataTable.Rows.Add(row);
+            row["DirectorId"] = directorId;
+            TitleDirectorTable.Rows.Add(row);
         }
 
-        public void InsertIntoDB(SqlConnection sqlConn, SqlTransaction sqlTrans)
+        public void InsertTitleWriter(int titleId, int writerId)
         {
-
-            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls, sqlTrans))
-            {
-                bulkCopy.DestinationTableName = "Titles";
-                bulkCopy.BulkCopyTimeout = 0;
-                bulkCopy.BatchSize = 500000;
-                bulkCopy.ColumnMappings.Add("Id", "Id");
-                bulkCopy.ColumnMappings.Add("TypeId", "TypeId");
-                bulkCopy.ColumnMappings.Add("PrimaryTitle", "PrimaryTitle");
-                bulkCopy.ColumnMappings.Add("OriginalTitle", "OriginalTitle");
-                bulkCopy.ColumnMappings.Add("IsAdult", "IsAdult");
-                bulkCopy.ColumnMappings.Add("StartYear", "StartYear");
-                bulkCopy.ColumnMappings.Add("EndYear", "EndYear");
-                bulkCopy.ColumnMappings.Add("RuntimeMinutes", "RuntimeMinutes");
-                bulkCopy.WriteToServer(TitleDataTable);
-            }
-            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
-            {
-                bulkCopy.DestinationTableName = "Title_Genre";
-                bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
-                bulkCopy.ColumnMappings.Add("GenreId", "GenreId");
-                bulkCopy.WriteToServer(TitleGenreDataTable);
-            }
+            DataRow row = TitleWriterTable.NewRow();
+            row["TitleId"] = titleId;
+            row["WriterId"] = writerId;
+            TitleWriterTable.Rows.Add(row);
         }
+
+        public void InsertIntoDB(SqlConnection sqlConn, SqlTransaction sqlTrans, bool insertNames = false, bool insertCrew = false)
+        {
+            if (insertNames)
+            {
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "Name";
+                    bulkCopy.BatchSize = 500000;
+                    bulkCopy.BulkCopyTimeout = 0;
+                    bulkCopy.ColumnMappings.Add("Id", "Id");
+                    bulkCopy.ColumnMappings.Add("PrimaryName", "PrimaryName");
+                    bulkCopy.ColumnMappings.Add("BirthYear", "BirthYear");
+                    bulkCopy.ColumnMappings.Add("DeathYear", "DeathYear");
+                    bulkCopy.WriteToServer(NameTable);
+                }
+
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "Profession_Name";
+                    bulkCopy.ColumnMappings.Add("ProfessionId", "ProfessionId");
+                    bulkCopy.ColumnMappings.Add("NameId", "NameId");
+                    bulkCopy.WriteToServer(ProfessionNameTable);
+                }
+            }
+
+            if (insertCrew)
+            {
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "Title_Director";
+                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
+                    bulkCopy.ColumnMappings.Add("DirectorId", "DirectorId");
+                    bulkCopy.WriteToServer(TitleDirectorTable);
+                }
+
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "Title_Writer";
+                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
+                    bulkCopy.ColumnMappings.Add("WriterId", "WriterId");
+                    bulkCopy.WriteToServer(TitleWriterTable);
+                }
+            } 
+        }
+
         public void ClearTables()
         {
-            TitleDataTable.Clear();
-            TitleGenreDataTable.Clear();
+            TitleDirectorTable.Clear();
+            TitleWriterTable.Clear();
+            ProfessionNameTable.Clear();
+            NameTable.Clear();
         }
 
     }

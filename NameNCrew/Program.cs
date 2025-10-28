@@ -32,10 +32,6 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
             string[] values = titleString.Split('\t');
             if (values.Length == 9)
             {
-                if (!PrimaryProfession.ContainsKey(values[1]))
-                { 
-                    AddTitleType(values[1], sqlConn, sqlTrans, PrimaryProfession);
-                }
                 try
                 {
                     Name name = new Name
@@ -117,15 +113,15 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
 
 
 
-    void AddProfession(string titleType, SqlConnection sqlConn, SqlTransaction sqlTrans, Dictionary<string, int> PrimaryProfession)
+    void AddProfession(string primaryProfession, SqlConnection sqlConn, SqlTransaction sqlTrans, Dictionary<string, int> PrimaryProfession)
     {
-        if (!PrimaryProfession.ContainsKey(PrimaryProfession))
+        if (!PrimaryProfession.ContainsKey(primaryProfession))
         {
             SqlCommand sqlComm = new SqlCommand(
                 "INSERT INTO TitleTypes (Type) VALUES ('" + PrimaryProfession + "'); " +
                 "SELECT SCOPE_IDENTITY();", sqlConn, sqlTrans);
             int newId = Convert.ToInt32(sqlComm.ExecuteScalar());
-            PrimaryProfession[titleType] = newId;
+            PrimaryProfession[primaryProfession] = newId;
         }
     }
 }
