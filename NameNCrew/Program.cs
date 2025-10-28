@@ -57,7 +57,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                     foreach (string knownForName in name.KnownForTitles)
                     {
                         if (!KnownForTitles.ContainsKey(knownForName))
-                            AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles);
+                            AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles); 
 
                         bulkSql.InsertProfessionName(name.Id, KnownForTitles[knownForName]);
                     }
