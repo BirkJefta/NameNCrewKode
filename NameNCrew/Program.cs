@@ -33,7 +33,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
             if (values.Length == 9)
             {
                 if (!PrimaryProfession.ContainsKey(values[1]))
-                {
+                { 
                     AddTitleType(values[1], sqlConn, sqlTrans, PrimaryProfession);
                 }
                 try
