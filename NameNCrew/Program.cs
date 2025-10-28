@@ -11,7 +11,7 @@ sw.Start();
 
 
 
-string filename = "c:/temp/title.basics.tsv";
+string filename = "c:/temp/Name.basics.tsv";
 using (SqlConnection sqlConn = new SqlConnection(connectionString))
 {
     sqlConn.Open();
