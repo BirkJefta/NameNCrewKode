@@ -4,7 +4,7 @@ using System.IO;
 using NameNCrew;
 
 
-string connectionString = "Server=BIRKPC;Database=IMDB;" +
+string connectionString = "Server=PC;Database=IMDB;" +
     "integrated security=True;TrustServerCertificate=True;";
 Stopwatch sw = new Stopwatch();
 sw.Start();
