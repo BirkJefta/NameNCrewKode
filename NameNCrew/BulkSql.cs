@@ -16,6 +16,7 @@ namespace NameNCrew {
         public DataTable TitleDirectorTable { get; set; }
         public DataTable TitleWriterTable { get; set; }
         public DataTable TitleNameTable { get; set; }
+        public DataTable KnownForTable { get; set; }
 
         public BulkSql()
         {
@@ -40,6 +41,10 @@ namespace NameNCrew {
             TitleNameTable = new DataTable();
             TitleNameTable.Columns.Add("TitleId", typeof(int));
             TitleNameTable.Columns.Add("NameId", typeof(int));
+
+            KnownForTable = new DataTable();
+            KnownForTable.Columns.Add("NameId", typeof(int));
+            KnownForTable.Columns.Add("TitleId", typeof(int));
         }
 
         public void InsertName(Name name)
@@ -82,6 +87,14 @@ namespace NameNCrew {
             row["TitleId"] = titleId;
             row["NameId"] = nameId;
             TitleWriterTable.Rows.Add(row);
+        }
+
+        public void InsertKnownFor(int nameId, int titleId)
+        {
+            DataRow row = KnownForTable.NewRow();
+            row["NameId"] = nameId;
+            row["TitleId"] = titleId;
+            KnownForTable.Rows.Add(row);
         }
 
         public void InsertIntoDB(SqlConnection sqlConn, SqlTransaction sqlTrans, bool insertNames = false, bool insertCrew = false)
@@ -134,6 +147,14 @@ namespace NameNCrew {
                     bulkCopy.ColumnMappings.Add("WriterId", "WriterId");
                     bulkCopy.WriteToServer(TitleWriterTable);
                 }
+
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
+                {
+                    bulkCopy.DestinationTableName = "KnownFor";
+                    bulkCopy.ColumnMappings.Add("NameId", "NameId");
+                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
+                    bulkCopy.WriteToServer(KnownForTable);
+                }
             } 
         }
 
@@ -144,6 +165,7 @@ namespace NameNCrew {
             ProfessionNameTable.Clear();
             NameTable.Clear();
             TitleNameTable.Clear();
+            KnownForTable.Clear();
         }
 
     }
