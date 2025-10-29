@@ -4,7 +4,7 @@ using System.IO;
 using NameNCrew;
 
 
-string connectionString = "Server=PC;Database=IMDB;" +
+string connectionString = "Server=DESKTOP-N9I8DBU;Database=IMDB;" +
     "integrated security=True;TrustServerCertificate=True;";
 Stopwatch sw = new Stopwatch();
 sw.Start();
@@ -57,7 +57,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
                     foreach (string knownForName in name.KnownForTitles)
                     {
                         if (!KnownForTitles.ContainsKey(knownForName))
-                            AddProfession(knownForName, sqlConn, sqlTrans, KnownForTitles); 
+                            AddKnownForTitle(knownForName, KnownForTitles); 
                          
                         bulkSql.InsertKnownFor(name.Id, KnownForTitles[knownForName]); 
                     }
@@ -214,9 +214,19 @@ void AddProfession(string primaryProfession, SqlConnection sqlConn, SqlTransacti
     if (!PrimaryProfession.ContainsKey(primaryProfession))
     {
         SqlCommand sqlComm = new SqlCommand(
-            "INSERT INTO Profession (Type) VALUES ('" + PrimaryProfession + "'); " + 
+            "INSERT INTO Profession (Profession) VALUES ('" + primaryProfession + "'); " + 
             "SELECT SCOPE_IDENTITY();", sqlConn, sqlTrans); 
         int newId = Convert.ToInt32(sqlComm.ExecuteScalar());
         PrimaryProfession[primaryProfession] = newId;
+    }
+}
+
+void AddKnownForTitle(string knownForTitle, Dictionary<string, int> KnownForTitles)
+{
+    if (!KnownForTitles.ContainsKey(knownForTitle))
+    {
+        // Convert ttNNNNNNN -> int id
+        int titleId = int.Parse(knownForTitle.Substring(2));
+        KnownForTitles[knownForTitle] = titleId;
     }
 }

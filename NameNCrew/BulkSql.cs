@@ -124,9 +124,9 @@ namespace NameNCrew {
                 using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
                 {
                     bulkCopy.DestinationTableName = "Title_Name";
-                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
                     bulkCopy.ColumnMappings.Add("NameId", "NameId");
-                    bulkCopy.WriteToServer(TitleNameTable);
+                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
+                    bulkCopy.WriteToServer(KnownForTable);
                 }
             }
 
@@ -146,14 +146,6 @@ namespace NameNCrew {
                     bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
                     bulkCopy.ColumnMappings.Add("WriterId", "WriterId");
                     bulkCopy.WriteToServer(TitleWriterTable);
-                }
-
-                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn, SqlBulkCopyOptions.KeepNulls, sqlTrans))
-                {
-                    bulkCopy.DestinationTableName = "KnownFor";
-                    bulkCopy.ColumnMappings.Add("NameId", "NameId");
-                    bulkCopy.ColumnMappings.Add("TitleId", "TitleId");
-                    bulkCopy.WriteToServer(KnownForTable);
                 }
             } 
         }
