@@ -214,7 +214,7 @@ void AddProfession(string primaryProfession, SqlConnection sqlConn, SqlTransacti
     if (!PrimaryProfession.ContainsKey(primaryProfession))
     {
         SqlCommand sqlComm = new SqlCommand(
-            "INSERT INTO TitleTypes (Type) VALUES ('" + PrimaryProfession + "'); " + 
+            "INSERT INTO Profession (Type) VALUES ('" + PrimaryProfession + "'); " + 
             "SELECT SCOPE_IDENTITY();", sqlConn, sqlTrans); //forkert tabel skal rettes
         int newId = Convert.ToInt32(sqlComm.ExecuteScalar());
         PrimaryProfession[primaryProfession] = newId;
