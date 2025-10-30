@@ -103,7 +103,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
             //SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT Name ON;", sqlConn, sqlTrans);
             //cmd.ExecuteNonQuery();
 
-            bulkSql.InsertIntoDB(sqlConn, sqlTrans);
+            bulkSql.InsertIntoDB(sqlConn, sqlTrans, insertNames: true);
             bulkSql.ClearTables();
 
             //cmd = new SqlCommand("SET IDENTITY_INSERT Name OFF;", sqlConn, sqlTrans);
@@ -195,7 +195,7 @@ using (SqlConnection sqlConn = new SqlConnection(connectionString))
         }
         if (linecount > 0)
         {
-            bulkSql.InsertIntoDB(sqlConn, sqlTrans);
+            bulkSql.InsertIntoDB(sqlConn, sqlTrans, insertCrew: true);
             bulkSql.ClearTables();
 
             sqlTrans.Commit();
